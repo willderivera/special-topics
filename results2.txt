@@ -1,3 +1,7 @@
 Greedy Knapsack algorithm:
 This algorithm runs in O(n^2), meaning it runs fast even for large numbers. The first loop that gets the ratios for each object and puts them in a vector runs in O(n), looping through each object once. The second loop, that sorts the object indices by highest ratio, runs in O(n^2). The third loop, to add all legal objects, runs in O(n).
 This algorithm does not always find the optimal solution. For larger numbers, it finds a better solution than the exhaustive algorithm previously did.
+
+Greedy Graph Coloring Algorithm:
+This algorithm runs in O(n^2) with n being the number of nodes in the graph, meaning it runs fast even for large numbers. The outer loop itertes through all the nodes and finds the current bst color for that node, looping through each object once. The inner loop iterates through all nodes and finds neighbors of the currently selected node.
+This algorithm does not always find the optimal solution. It does however find a good solution much faster than the exhaustive algorithm
