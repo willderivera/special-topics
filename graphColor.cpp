@@ -114,7 +114,7 @@ int main() {
 	*/
 
 	//fin.open(filename.c_str());
-	for (int i = 2; i < 11; i++) {
+	for (int i = 0; i < 11; i++) {
 		fin.open( (filenames[i] + ".input").c_str() );
 		fout.open( (filenames[i] + ".output").c_str() );
 		if(!fin) {

@@ -1007,6 +1007,7 @@ int graph::getfirstAvailColor(int node, int numColors) {
 	}
 
 	//iterate through color conflict vector and find smallest value
+	//skip color 0
 	for (int c = 1; c < colors.size(); c++) {
 		if (colors[c] < colors[minColor]) {
 			minColor = c;
