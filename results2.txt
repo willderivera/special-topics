@@ -1,0 +1,3 @@
+Greedy Knapsack algorithm:
+This algorithm runs in O(n^2), meaning it runs fast even for large numbers. The first loop that gets the ratios for each object and puts them in a vector runs in O(n), looping through each object once. The second loop, that sorts the object indices by highest ratio, runs in O(n^2). The third loop, to add all legal objects, runs in O(n).
+This algorithm does not always find the optimal solution. For larger numbers, it finds a better solution than the exhaustive algorithm previously did.
