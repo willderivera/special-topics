@@ -1,4 +1,4 @@
-// Project 1a: Solving knapsack using exhaustive search
+// Project 2a: Solving knapsack using greedy algorithm
 //
 // Brian Rose rose.bri@husky.neu.edu
 // Will de Rivera derivera.w@husky.neu.edu
