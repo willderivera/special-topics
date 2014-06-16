@@ -7,6 +7,7 @@
 #include "d_except.h"
 #include <list>
 #include <stack>
+#include <time.h>
 
 using namespace std;
 
@@ -437,6 +438,9 @@ class graph
    int degree(int);
    int numConflicts();
    int getfirstAvailColor(int node, int numColors);
+   graph twoOptNeighbor();
+   graph threeOptNeighbor();
+   void randomize(int numColors);
 
   private:
    matrix<edge> edges;
@@ -1014,4 +1018,61 @@ int graph::getfirstAvailColor(int node, int numColors) {
 		}
 	}
 	return minColor;
+}
+
+//method computes best 2-opt neighbor of given graph
+//returns best neighbor
+graph graph::twoOptNeighbor() {
+	graph best = *this;
+	graph temp;
+	for (int i = 0; i < numNodes() - 1; i++) {
+		for (int j = i + 1; j < numNodes(); j++) {
+			temp = *this;
+			int c1 = getColor(i);
+			int c2 = getColor(j);
+			temp.setColor(i, c2);
+			temp.setColor(j, c1);
+			if(temp.numConflicts() < best.numConflicts()) {
+				best = temp;
+			}
+		}
+	}
+	return best;
+}
+
+//method computes best 3-opt neighbor of given graph
+//returns best neighbor
+graph graph::threeOptNeighbor() {
+	graph best = *this;
+	graph temp = *this;
+	int c[3];
+	int ai[] = {0, 1, 1, 2, 2};
+	int aj[] = {2, 2, 0, 0, 1};
+	int ak[] = {1, 0, 2, 1, 0};
+	for (int i = 0; i < numNodes() - 2; i++) {
+		for (int j = i + 1; j < numNodes()- 1; j++) {
+			for (int k = j + 1; k < numNodes(); k++) {
+				c[0] = temp.getColor(i);
+				c[1] = temp.getColor(j);
+				c[2] = temp.getColor(k);
+				for (int x = 0; x < 5; x++) {
+					temp.setColor(i, ai[x]);
+					temp.setColor(j, aj[x]);
+					temp.setColor(k, ak[x]);
+					if(temp.numConflicts() < best.numConflicts()) {
+						best = temp;
+					}
+				}
+			}
+		}
+	}
+	return best;
+}
+
+//method randomizes colors in given graph
+void graph::randomize(int numColors) {
+	srand(time(NULL));
+	for (int n = 0; n < this->numNodes(); n++) {
+		this->setColor(n, rand() % numColors + 1);
+	}
 }

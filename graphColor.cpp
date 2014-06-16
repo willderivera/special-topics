@@ -91,6 +91,42 @@ int naturalGreedyColoring(graph &g, int numColors, int t) {
 	return g.numConflicts();
 }
 
+//method takes a graph and finds the best local optimum using 2-opt neighbors
+//returns number of coflicts
+int twoOptSteepestDecent(graph &g) {
+	graph prevBest;
+	do {
+		prevBest = g;
+		g = prevBest.twoOptNeighbor();
+	}
+	while (prevBest.numConflicts() > g.numConflicts());
+	return g.numConflicts();
+}
+
+//method takes a graph and finds the best local optimum using 3-opt neighbors
+//returns number of coflicts
+int threeOptSteepestDecent(graph &g) {
+	graph prevBest;
+	do {
+		prevBest = g;
+		g = prevBest.threeOptNeighbor();
+	}
+	while (prevBest.numConflicts() > g.numConflicts());
+	return g.numConflicts();
+}
+
+bool eq(graph &g1, graph &g2) {
+	if (g1.numNodes() != g2.numNodes()) {
+		return false;
+	}
+	for (int n = 0; n < g1.numNodes(); n++) {
+		if(g1.getColor(n) != g2.getColor(n)) {
+			return false;
+		}
+	}
+	return true;
+}
+
 int main() {
 	char x;
 	ifstream fin;
@@ -116,7 +152,7 @@ int main() {
 	//fin.open(filename.c_str());
 	for (int i = 0; i < 11; i++) {
 		fin.open( (filenames[i] + ".input").c_str() );
-		fout.open( (filenames[i] + ".output").c_str() );
+		fout.open( (filenames[i] + "1.output").c_str() );
 		if(!fin) {
 			cerr << "Cannot open " << filename << endl;
 			exit(1);
@@ -134,8 +170,23 @@ int main() {
 
 			//exhaustiveColoring(g, numColors, 600);
 			naturalGreedyColoring(g, numColors, 600);
-			g.printSolution();
-			g.printSolution(fout);
+			graph g1 = g;
+			//graph g2 = g;
+			//int con1 = twoOptSteepestDecent(g1);
+			//int con2 = threeOptSteepestDecent(g2);
+			cout<<endl;
+			//if (!eq(g1,g2) || !eq(g1,g) || !eq(g,g2)) {
+				g.printSolution();
+			if (!eq(g1,g)) { 
+				g.printSolution();
+				cout<<endl;
+				//g1.printSolution();
+				cout<<endl;
+				//g2.printSolution();
+				//cout<<endl;
+			}
+			//g.printSolution(fout);
+
 		}
 		catch(indexRangeError &ex) {
 			cout << ex.what()<< endl; exit(1);
