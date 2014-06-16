@@ -22,10 +22,10 @@ void neighborhood2Opt(knapsack &k, int maxTime)
 {
 	knapsack current(k);
 
-	int bestValue = 0;
+//	int bestValue = 0;
 	int prevBestValue = 0;
 
-	bool newSolution = false;
+	bool newSolution = true;
 
 	clock_t start = clock()/CLOCKS_PER_SEC;
 	clock_t finish = start + maxTime;
@@ -46,10 +46,9 @@ void neighborhood2Opt(knapsack &k, int maxTime)
 				current.select(i);
 			}
 
-			if(current.getValue() <= current.getCostLimit() && current.getValue() > bestValue)
+			if(current.getValue() <= current.getCostLimit() && current.getValue() > k.getValue())
 			{
 				k = current;
-				bestValue = current.getValue();
 				newSolution = true;
 			}
 		}
@@ -61,7 +60,7 @@ void neighborhood3Opt(knapsack &k, int maxTime)
 {
 	knapsack current(k);
 
-	int bestValue = 0;
+//	int bestValue = 0;
 	int prevBestValue = 0;
 
 	bool newSolution = false;
@@ -95,10 +94,9 @@ void neighborhood3Opt(knapsack &k, int maxTime)
 					current.select(j);
 				}
 
-				if(current.getValue() <= current.getCostLimit() && current.getValue() > bestValue)
+				if(current.getValue() <= current.getCostLimit() && current.getValue() > k.getValue())
 				{
 					k = current;
-					bestValue = current.getValue();
 					newSolution = true;
 				}
 
@@ -118,7 +116,7 @@ void neighborhood3Opt(knapsack &k, int maxTime)
 
 void randomKnapsack(knapsack &k, int maxTime)
 {
-	int bestValue = 0;
+//	int bestValue = 0;
 
 	clock_t start = clock()/CLOCKS_PER_SEC;
 	clock_t finish = start + maxTime;
@@ -135,6 +133,10 @@ void randomKnapsack(knapsack &k, int maxTime)
 			{
 				current.select(i);
 			}
+			else
+			{
+				current.unSelect(i);
+			}
 
 			if(current.getCost() > current.getCostLimit())
 			{
@@ -142,9 +144,8 @@ void randomKnapsack(knapsack &k, int maxTime)
 			}
 		}
 
-		if (current.getValue() > bestValue)
+		if (current.getValue() > k.getValue())
 		{
-			bestValue = current.getValue();
 			k = current;
 		}
 	}
@@ -207,8 +208,8 @@ int main()
    // Read the name of the graph from the keyboard or
    // hard code it here for testing.
    
-   fileName = "knapsack8.input";
-   outputFileName = "knapsack8.output";
+   fileName = "knapsack512.input";
+//   outputFileName = "knapsack8.output";
 
    fout.open(outputFileName.c_str());
 
@@ -226,20 +227,15 @@ int main()
    {
       cout << "Reading knapsack instance" << endl;
       knapsack k(fin);
-
-   //   greedyKnapsack(k);
-	  //neighborhood2Opt(k, 600);
-	  //
-	  //greedyKnapsack(k);
-	  //neighborhood3Opt(k, 600);
-
-	  randomKnapsack(k, 5);
-	  neighborhood2Opt(k, 600);
-
-	  //randomKnapsack(k, 600);
-	  //neighborhood3Opt(k, 600);
-
 	  cout << k;
+
+      //greedyKnapsack(k);
+	  randomKnapsack(k, 60);
+
+	  neighborhood2Opt(k, 600);
+	  //neighborhood3Opt(k, 600);
+
+	  k.printSolution();
    }
 
    catch (indexRangeError &ex) 
