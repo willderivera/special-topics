@@ -1,0 +1,3 @@
+Knapsack
+With smaller numbers, sometimes the random solution gave a better answer than the greedy algorithm. I would speculate that this is because the greedy algorithm might lead to the neighborhood function getting stuck in a local optimum, where the random function itself would generally find a close to if not optimal value. In bigger numbers, the random function would not be able to find the optimal or as close to optimal, so the greedy algorithm finds one that is pretty close.
+For most solutions, the 2 opt and 3 opt neighborhood functions gave the same results. I think this is because while they take different ways to get there, they end up at a local optimum.
