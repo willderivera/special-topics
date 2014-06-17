@@ -93,25 +93,50 @@ int naturalGreedyColoring(graph &g, int numColors, int t) {
 
 //method takes a graph and finds the best local optimum using 2-opt neighbors
 //returns number of coflicts
-int twoOptSteepestDecent(graph &g) {
+int twoOptSteepestDecent(graph &g, bool repeat, int numColors) {
+	double startTime = (double) (clock() / CLOCKS_PER_SEC);
 	graph prevBest;
-	do {
-		prevBest = g;
-		g = prevBest.twoOptNeighbor();
+
+	while ( (double)(clock() / CLOCKS_PER_SEC) - startTime < 600) {
+		do {
+			if (repeat) {
+				g.randomize(numColors);
+			}
+			prevBest = g;
+			g = prevBest.twoOptNeighbor(600 + startTime);
+			if ( (double)(clock() / CLOCKS_PER_SEC) - startTime > 600) {
+				break;
+			}
+		}
+		while (prevBest.numConflicts() > g.numConflicts());
+		if (!repeat) {
+			break;
+		}
 	}
-	while (prevBest.numConflicts() > g.numConflicts());
 	return g.numConflicts();
 }
 
 //method takes a graph and finds the best local optimum using 3-opt neighbors
 //returns number of coflicts
-int threeOptSteepestDecent(graph &g) {
+int threeOptSteepestDecent(graph &g, bool repeat, int numColors) {
+	double startTime = (double) (clock() / CLOCKS_PER_SEC);
 	graph prevBest;
-	do {
-		prevBest = g;
-		g = prevBest.threeOptNeighbor();
+	while ( (double)(clock() / CLOCKS_PER_SEC) - startTime < 600) {
+		do {
+			if (repeat) {
+				g.randomize(numColors);
+			}
+			prevBest = g;
+			g = prevBest.threeOptNeighbor(600 + startTime);
+			if ( (double)(clock() / CLOCKS_PER_SEC) - startTime > 600) {
+				break;
+			}
+		}
+		while (prevBest.numConflicts() > g.numConflicts());
+		if (!repeat) {
+			break;
+		}
 	}
-	while (prevBest.numConflicts() > g.numConflicts());
 	return g.numConflicts();
 }
 
@@ -150,9 +175,9 @@ int main() {
 	*/
 
 	//fin.open(filename.c_str());
-	for (int i = 0; i < 11; i++) {
+	for (int i = 6; i < 11; i++) {
 		fin.open( (filenames[i] + ".input").c_str() );
-		fout.open( (filenames[i] + "1.output").c_str() );
+		fout.open( (filenames[i] + ".output").c_str() );
 		if(!fin) {
 			cerr << "Cannot open " << filename << endl;
 			exit(1);
@@ -170,22 +195,33 @@ int main() {
 
 			//exhaustiveColoring(g, numColors, 600);
 			naturalGreedyColoring(g, numColors, 600);
+
 			graph g1 = g;
-			//graph g2 = g;
-			//int con1 = twoOptSteepestDecent(g1);
-			//int con2 = threeOptSteepestDecent(g2);
-			cout<<endl;
-			//if (!eq(g1,g2) || !eq(g1,g) || !eq(g,g2)) {
-				g.printSolution();
-			if (!eq(g1,g)) { 
-				g.printSolution();
-				cout<<endl;
-				//g1.printSolution();
-				cout<<endl;
-				//g2.printSolution();
-				//cout<<endl;
+			graph g2 = g;
+			graph g3 = g;
+			graph g4 = g;
+			int c1, c2, c3, c4;
+			c1 = twoOptSteepestDecent(g1, false, numColors);
+			c2 = threeOptSteepestDecent(g2, false, numColors);
+			c3 = twoOptSteepestDecent(g3, true, numColors);
+			c4 = threeOptSteepestDecent(g4, true, numColors);
+			
+			if (c1 <= c2 && c1 <= c3 && c1 <= c4) {
+				fout << "greedy initial solution followed by steepest descentwith 2-Opt"<<endl;
+				g1.printSolution(fout);
 			}
-			//g.printSolution(fout);
+			else if (c2 <= c3 && c2 <= c4) {
+				fout << "greedy initial solution followed by steepest descentwith 3-Opt"<<endl;
+				g2.printSolution(fout);
+			}
+			else if (c3 <= c4) {
+				fout << "random initial solution followed by steepest descent with 2-Opt with multiple restarts"<<endl;
+				g3.printSolution(fout);
+			}
+			else {
+				fout << "random initial solution followed by steepest descent with 3-Opt with multiple restarts"<<endl;
+				g4.printSolution(fout);
+			}
 
 		}
 		catch(indexRangeError &ex) {
@@ -196,7 +232,7 @@ int main() {
 		}
 		fin.close();
 		fout.close();
-		system("pause");
+		//system("pause");
 	}
 	system("pause");
 }

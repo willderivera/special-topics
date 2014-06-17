@@ -438,8 +438,8 @@ class graph
    int degree(int);
    int numConflicts();
    int getfirstAvailColor(int node, int numColors);
-   graph twoOptNeighbor();
-   graph threeOptNeighbor();
+   graph twoOptNeighbor(double time);
+   graph threeOptNeighbor(double time);
    void randomize(int numColors);
 
   private:
@@ -1022,19 +1022,23 @@ int graph::getfirstAvailColor(int node, int numColors) {
 
 //method computes best 2-opt neighbor of given graph
 //returns best neighbor
-graph graph::twoOptNeighbor() {
+graph graph::twoOptNeighbor(double time) {
+	bool currTime = true;
 	graph best = *this;
-	graph temp;
-	for (int i = 0; i < numNodes() - 1; i++) {
-		for (int j = i + 1; j < numNodes(); j++) {
-			temp = *this;
-			int c1 = getColor(i);
-			int c2 = getColor(j);
+	graph temp = *this;
+	int c1, c2;
+	for (int i = 0; i < numNodes() - 1 && currTime; i++) {
+		for (int j = i + 1; j < numNodes() && currTime; j++) {
+			c1 = getColor(i);
+			c2 = getColor(j);
 			temp.setColor(i, c2);
 			temp.setColor(j, c1);
 			if(temp.numConflicts() < best.numConflicts()) {
 				best = temp;
 			}
+			temp.setColor(i, c1);
+			temp.setColor(j, c2);
+			currTime = (double) (clock() / CLOCKS_PER_SEC) < time;
 		}
 	}
 	return best;
@@ -1042,27 +1046,29 @@ graph graph::twoOptNeighbor() {
 
 //method computes best 3-opt neighbor of given graph
 //returns best neighbor
-graph graph::threeOptNeighbor() {
+graph graph::threeOptNeighbor(double time) {
+	bool currTime = true;
 	graph best = *this;
 	graph temp = *this;
 	int c[3];
-	int ai[] = {0, 1, 1, 2, 2};
-	int aj[] = {2, 2, 0, 0, 1};
-	int ak[] = {1, 0, 2, 1, 0};
-	for (int i = 0; i < numNodes() - 2; i++) {
-		for (int j = i + 1; j < numNodes()- 1; j++) {
-			for (int k = j + 1; k < numNodes(); k++) {
+	int ai[] = {0, 1, 1, 2, 2, 0};
+	int aj[] = {2, 2, 0, 0, 1, 1};
+	int ak[] = {1, 0, 2, 1, 0, 2};
+	for (int i = 0; i < numNodes() - 2 && currTime; i++) {
+		for (int j = i + 1; j < numNodes()- 1 && currTime; j++) {
+			for (int k = j + 1; k < numNodes() && currTime; k++) {
 				c[0] = temp.getColor(i);
 				c[1] = temp.getColor(j);
 				c[2] = temp.getColor(k);
-				for (int x = 0; x < 5; x++) {
-					temp.setColor(i, ai[x]);
-					temp.setColor(j, aj[x]);
-					temp.setColor(k, ak[x]);
+				for (int x = 0; x < 6; x++) {
+					temp.setColor(i, c[ai[x]]);
+					temp.setColor(j, c[aj[x]]);
+					temp.setColor(k, c[ak[x]]);
 					if(temp.numConflicts() < best.numConflicts()) {
 						best = temp;
 					}
 				}
+				currTime = (double) (clock() / CLOCKS_PER_SEC) < time;
 			}
 		}
 	}
